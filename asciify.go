@@ -34,7 +34,13 @@ func read_image_data(r *http.Request) (image_data []byte, width int, err error) 
     width = default_width
   }
 
-  // TODO: add image upload support
+  // FIXME: these variable names are getting confusing, and I'm ignoring errors
+  if r.Method == "POST" {
+    img_data, _, _ := r.FormFile("image_file")
+    img, _ := ioutil.ReadAll(img_data)
+    image_data = img
+  }
+
   if image_data == nil {
     if image_url == "" {
       image_url = test_image_url
