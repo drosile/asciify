@@ -1,8 +1,10 @@
 package main
 
 import (
+  "bytes"
   "fmt"
   "html"
+  "image"
   "io/ioutil"
   "net/http"
 )
@@ -33,6 +35,18 @@ func read_image_data(r *http.Request) (image_data []byte, err error) {
     }
     image_data = i
   }
+  return
+}
+
+func convert_image_to_ascii(image_data []byte) (ascii [][]string) {
+  data, _, err := image.Decode(bytes.NewReader(image_data))
+  bounds := data.Bounds()
+  for x := bounds.Min.X; x < bounds.Max.X; x++ {
+    for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+      r, g, b, a := data.At(x, y).RGBA()
+    }
+  }
+  ascii = "a"
   return
 }
 
