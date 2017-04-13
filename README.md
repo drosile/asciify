@@ -14,6 +14,14 @@ This will run a web server on local port 9999. This server provides two endpoint
 - `/` will return ASCII art as plain text
 - `/json` will return a JSON payload containing the ASCII art under the attribute `image_string`
 
+To use either endpoint, either POST an image file with multipart/form-data using `image_file`, or do a GET with the URL query parameter `image_url=[your_image_url]`. A default image will be used if neither of these options is used.
+
+The default width of the generate ASCII art is 100 characters. To change that, pass a `width` query parameter as an integer.
+
+# Known Issues
+
+If you pass something that is not an image to this service, it will try to treat it like an image, but it will likely result in a failure.
+
 # Dependencies
 
 This project makes use of [https://github.com/stdupp/goasciiart](goasciiart) code, but since it is a program, not a package, I have included it in this repo. This code does the following:
