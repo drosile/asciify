@@ -4,6 +4,7 @@ import (
   "./goasciiart"
 
   "bytes"
+  "encoding/json"
   "fmt"
   "html"
   "image"
@@ -11,6 +12,10 @@ import (
   "net/http"
   "strconv"
 )
+
+type AsciiAPIResponse struct {
+  ImageString string `json:"image_string"`
+}
 
 func read_image_data(r *http.Request) (image_data []byte, width int, err error) {
   const (
@@ -70,10 +75,24 @@ func asciify_handler(w http.ResponseWriter, r *http.Request) {
   fmt.Fprintf(w, "%s", convert_image_to_ascii(image_data, width))
 }
 
+func json_asciify_handler(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Content-Type", "application/json")
+  image_data, width, err := read_image_data(r)
+  // FIXME: Error message should be JSON
+  if err != nil {
+    fmt.Fprintf(w, "request failed")
+    return
+  }
+  image_string := string(convert_image_to_ascii(image_data, width))
+  p := AsciiAPIResponse{ImageString: image_string}
+  json.NewEncoder(w).Encode(p)
+}
+
 func main() {
   const (
     http_port = ":9999"
   )
   http.HandleFunc("/", asciify_handler)
+  http.HandleFunc("/json", json_asciify_handler)
   http.ListenAndServe(http_port, nil)
 }
