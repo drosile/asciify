@@ -1,8 +1,6 @@
 package main
 
 import (
-  "./goasciiart"
-
   "bytes"
   "encoding/json"
   "fmt"
@@ -10,7 +8,10 @@ import (
   "image"
   "io/ioutil"
   "net/http"
+  "os"
   "strconv"
+
+  "./goasciiart"
 )
 
 type AsciiAPIResponse struct {
@@ -95,10 +96,13 @@ func json_asciify_handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-  const (
-    http_port = ":9999"
-  )
+  port := os.Getenv("GO_PORT")
+
+  if port == "" {
+    port = "9999"
+  }
+
   http.HandleFunc("/", asciify_handler)
   http.HandleFunc("/json", json_asciify_handler)
-  http.ListenAndServe(http_port, nil)
+  http.ListenAndServe(":" + port, nil)
 }
